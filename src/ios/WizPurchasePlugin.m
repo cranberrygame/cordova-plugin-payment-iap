@@ -274,21 +274,55 @@
 
 # pragma Methods for SKPaymentTransactionObserver
 
+//cranberrygame start
+/*
+//iOS purchase restore not work #19
+//https://github.com/Wizcorp/phonegap-plugin-wizPurchase/issues/19
+//SKPaymentTransaction
+//https://developer.apple.com/LIBRARY/ios/documentation/StoreKit/Reference/SKPaymentTransaction_Class/index.html#//apple_ref/occ/instp/SKPaymentTransaction/payment
+//SKPayment
+//https://developer.apple.com/LIBRARY/ios/documentation/StoreKit/Reference/SKPaymentRequest_Class/index.html#//apple_ref/swift/cl/SKPayment
+*/
+//cranberrygame end
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
     if (restorePurchaseCb != NULL) {
-        NSArray *receipts;
+//cranberrygame start	
+        //NSArray *receipts;
+		NSMutableArray *purchasedProducts = [NSMutableArray array];
+//cranberrygame end		
         if ([[[SKPaymentQueue defaultQueue] transactions] count] > 0) {
             for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions]) {
-                // Build array of restored receipt items
-                [receipts arrayByAddingObject:[transaction transactionReceipt]];
-            }
-        } else {
+//cranberrygame start			
+/*
+				// Build array of restored receipt items
+                [purchasedProducts arrayByAddingObject:[transaction transactionReceipt]];
+*/				
+                // Immediately save to NSUserDefaults incase we cannot reach JavaScript in time
+                // or connection for server receipt verification is interupted
+                NSString *receipt = [[NSString alloc] initWithData:[transaction transactionReceipt] encoding:NSUTF8StringEncoding];
+                
+                // We requested this payment let's finish
+                NSDictionary *result = @{
+                     @"platform": @"ios",
+                     @"receipt": receipt,
+                     @"productId": transaction.payment.productIdentifier,
+                     @"packageName": [[NSBundle mainBundle] bundleIdentifier]
+                };
+                
+				[purchasedProducts addObject:result];
+            }				
+//cranberrygame end
+        } 
+/*		
+		else {
             receipts = [[NSArray alloc] init];
         }
+*/
+//cranberrygame end
 
         // Return result to JavaScript
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                           messageAsArray:receipts];
+                                                           messageAsArray:purchasedProducts];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:restorePurchaseCb];
         restorePurchaseCb = NULL;
     }
