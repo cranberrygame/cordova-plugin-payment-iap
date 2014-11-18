@@ -165,10 +165,12 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			getProductsDetails(args, callbackContext);
 			return true;
 		} else if (action.equalsIgnoreCase("makePurchase")) {
-			makePurchase(args, callbackContext);
+			if (mHelper != null && !mHelper.mAsyncInProgress) //cranberrygame
+				makePurchase(args, callbackContext);
 			return true;
 		} else if (action.equalsIgnoreCase("consumePurchase")) {
-			consumePurchase(args, callbackContext);
+			if (mHelper != null && !mHelper.mAsyncInProgress) //cranberrygame
+				consumePurchase(args, callbackContext);
 			return true;
 		}
 		return false;
@@ -382,22 +384,13 @@ public class WizPurchasePlugin extends CordovaPlugin {
 	 * @param sku Product Sku to be purchase
 	 **/
 	private void buy(final String sku) {
-//cranberrygame start
-		try {
-//cranberrygame end
-			// Process the purchase for the given product id and developerPayload
-			mHelper.launchPurchaseFlow(
-					cordova.getActivity(),
-					sku,
-					RC_REQUEST,
-					mPurchaseFinishedListener,
-					mDevPayload);
-//cranberrygame start
-		}
-		catch (IllegalStateException ex) {
-			Log.d(TAG, ex.toString());
-		}
-//cranberrygame end				
+		// Process the purchase for the given product id and developerPayload
+		mHelper.launchPurchaseFlow(
+				cordova.getActivity(),
+				sku,
+				RC_REQUEST,
+				mPurchaseFinishedListener,
+				mDevPayload);
 	}
 
 	/**
