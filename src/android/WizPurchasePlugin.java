@@ -593,8 +593,8 @@ public class WizPurchasePlugin extends CordovaPlugin {
 									skusObject.put(sku.getSku(), skuObject);
 								} catch (JSONException e) { }
 							}
-//cranberrygame end								
 						}
+//cranberrygame end
 					}
 					// If we have wrong sku log it out for the developer, this should be enough otherwise a return object should be issue
 					if (!wrongSku.isEmpty()){
