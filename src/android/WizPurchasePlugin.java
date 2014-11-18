@@ -382,13 +382,22 @@ public class WizPurchasePlugin extends CordovaPlugin {
 	 * @param sku Product Sku to be purchase
 	 **/
 	private void buy(final String sku) {
-		// Process the purchase for the given product id and developerPayload
-		mHelper.launchPurchaseFlow(
-				cordova.getActivity(),
-				sku,
-				RC_REQUEST,
-				mPurchaseFinishedListener,
-				mDevPayload);
+//cranberrygame start
+		try {
+//cranberrygame end
+			// Process the purchase for the given product id and developerPayload
+			mHelper.launchPurchaseFlow(
+					cordova.getActivity(),
+					sku,
+					RC_REQUEST,
+					mPurchaseFinishedListener,
+					mDevPayload);
+//cranberrygame start
+		}
+		catch (IllegalStateException ex) {
+			Log.d(TAG, ex.toString());
+		}
+//cranberrygame end				
 	}
 
 	/**
@@ -524,7 +533,7 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			}
 		}
 	};
-
+	
 	/**
 	 * Got SkuDetails Listener
 	 * Listener that's called when we finish querying the details of the products
@@ -559,18 +568,19 @@ public class WizPurchasePlugin extends CordovaPlugin {
 
 					// Iterate all skus
 					while (requestSkuIter.hasNext()) {
-						for (SkuDetails sku : skuList) {
 //cranberrygame start
-							requestSkuIter.next();
-/*						
-							if (!sku.getSku().equalsIgnoreCase(requestSkuIter.next()) ) {
+						String requestSku = requestSkuIter.next();
+						Log.d(TAG, "sku("+requestSku+")");
+						for (SkuDetails sku : skuList) {
+
+							if (!sku.getSku().equalsIgnoreCase(requestSku)) {
 								// If we already have invalid skus add a new line
 								if (!wrongSku.isEmpty())wrongSku += newline;
 								// Add the incorrect sku to our list
-								wrongSku += "sku not found in Google Inventory: " + sku;
+								wrongSku += "sku("+requestSku+") not found: " + sku.getSku()+"!";
 							} else {
-*/							
-//cranberrygame end								// Build the sku details object
+								Log.d(TAG, "sku("+requestSku+") found: " + sku.getSku()+"!");
+								// Build the sku details object
 								JSONObject skuObject = new JSONObject();
 								try {
 									// Fill the sku details
@@ -582,10 +592,7 @@ public class WizPurchasePlugin extends CordovaPlugin {
 									// Add the current sku details to the returning object
 									skusObject.put(sku.getSku(), skuObject);
 								} catch (JSONException e) { }
-//cranberrygame start
-/*
 							}
-*/
 //cranberrygame end								
 						}
 					}
@@ -603,8 +610,8 @@ public class WizPurchasePlugin extends CordovaPlugin {
 				mProductDetailCbContext = null;
 			}
 		}
-	};
-
+	};	
+		
 	/**
 	 * Purchase Finished Listener
 	 * Callback for when a purchase is finished
