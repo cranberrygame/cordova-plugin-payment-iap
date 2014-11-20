@@ -165,12 +165,10 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			getProductsDetails(args, callbackContext);
 			return true;
 		} else if (action.equalsIgnoreCase("makePurchase")) {
-			if (mHelper != null && !mHelper.mAsyncInProgress) //cranberrygame
-				makePurchase(args, callbackContext);
+			makePurchase(args, callbackContext);
 			return true;
 		} else if (action.equalsIgnoreCase("consumePurchase")) {
-			if (mHelper != null && !mHelper.mAsyncInProgress) //cranberrygame
-				consumePurchase(args, callbackContext);
+			consumePurchase(args, callbackContext);
 			return true;
 		}
 		return false;

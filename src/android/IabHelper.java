@@ -85,10 +85,7 @@ public class IabHelper {
 
     // Is an asynchronous operation in progress?
     // (only one at a time can be in progress)
-//cranberrygame start	
-    //boolean mAsyncInProgress = false;
-    public boolean mAsyncInProgress = false;
-//cranberrygame end
+    boolean mAsyncInProgress = false;
 
     // (for logging/debugging)
     // if mAsyncInProgress == true, what asynchronous operation is in progress?
