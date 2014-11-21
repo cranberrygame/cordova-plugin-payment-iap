@@ -83,43 +83,6 @@ namespace Cordova.Extension.Commands
 				DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Unknown Error"));
 			}
 		}
-
-		public async void restorePurchases(string args)
-        {
-			try
-			{
-				ListingInformation li = await Store.CurrentApp.LoadListingInformationAsync();
-				List<string> products = new List<string>();
-		
-				foreach (string key in li.ProductListings.Keys)
-				{
-					ProductListing pl = li.ProductListings[key];
-
-					if (CurrentApp.LicenseInformation.ProductLicenses[key].IsActive)
-					{		
-						//https://github.com/wildabeast/BarcodeScanner/blob/c3090dcf5347c1cc10caaeff225bb2c0a0deeede/src/wp8/BarcodeScanner.cs
-						Product p = new Product
-						{
-							productId = pl.ProductId,
-							title = pl.Name,
-							description = pl.Description,
-							price = pl.FormattedPrice
-						};
-						string json = JsonHelper.Serialize(p);
-						products.Add(json);						
-					}
-				}
-
-				if (products.Count > 0)
-				{
-					DispatchCommandResult(new PluginResult(PluginResult.Status.OK, JsonHelper.Serialize( products.ToArray() )));					
-				}
-			}
-			catch (Exception)
-			{
-				DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Unknown Error"));
-			}	
-        }
 		
         public async void purchaseProduct(string args)
         {
@@ -170,6 +133,43 @@ namespace Cordova.Extension.Commands
 			{
 				//Already owns the product
 			}			
+        }
+
+		public async void restorePurchases(string args)
+        {
+			try
+			{
+				ListingInformation li = await Store.CurrentApp.LoadListingInformationAsync();
+				List<string> products = new List<string>();
+		
+				foreach (string key in li.ProductListings.Keys)
+				{
+					ProductListing pl = li.ProductListings[key];
+
+					if (CurrentApp.LicenseInformation.ProductLicenses[key].IsActive)
+					{		
+						//https://github.com/wildabeast/BarcodeScanner/blob/c3090dcf5347c1cc10caaeff225bb2c0a0deeede/src/wp8/BarcodeScanner.cs
+						Product p = new Product
+						{
+							productId = pl.ProductId,
+							title = pl.Name,
+							description = pl.Description,
+							price = pl.FormattedPrice
+						};
+						string json = JsonHelper.Serialize(p);
+						products.Add(json);						
+					}
+				}
+
+				if (products.Count > 0)
+				{
+					DispatchCommandResult(new PluginResult(PluginResult.Status.OK, JsonHelper.Serialize( products.ToArray() )));					
+				}
+			}
+			catch (Exception)
+			{
+				DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Unknown Error"));
+			}	
         }		
     }
 }

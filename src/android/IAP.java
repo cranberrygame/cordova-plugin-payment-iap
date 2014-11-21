@@ -36,7 +36,7 @@ import com.smartmobilesoftware.util.SkuDetails;
  * @file		WizPurchase.java
  * @about		In-App-Billing Cordova Plug-in.
  */
-public class WizPurchasePlugin extends CordovaPlugin {
+public class IAP extends CordovaPlugin {
 
 	public static final String TAG = "WizPurchase";
 	private String mBase64EncodedPublicKey;
@@ -137,7 +137,7 @@ public class WizPurchasePlugin extends CordovaPlugin {
 
 		if (action.equalsIgnoreCase("getPending")) {
 			mGetPendingCbContext = callbackContext;
-			action = "restoreAll";
+			action = "restorePurchases";
 		}
 
 //cranberrygame start
@@ -158,17 +158,20 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			return true;
 		}
 //cranberrygame end
-		if (action.equalsIgnoreCase("restoreAll")) {
-			restoreAll(callbackContext);
+		if (action.equalsIgnoreCase("requestStoreListing")) {
+			requestStoreListing(args, callbackContext);
 			return true;
-		} else if (action.equalsIgnoreCase("getProductDetail")) {
-			getProductsDetails(args, callbackContext);
+		} 
+		else if (action.equalsIgnoreCase("restorePurchases")) {
+			restorePurchases(callbackContext);
 			return true;
-		} else if (action.equalsIgnoreCase("makePurchase")) {
-			makePurchase(args, callbackContext);
+		} 
+		else if (action.equalsIgnoreCase("purchaseProduct")) {
+			purchaseProduct(args, callbackContext);
 			return true;
-		} else if (action.equalsIgnoreCase("consumePurchase")) {
-			consumePurchase(args, callbackContext);
+		} 
+		else if (action.equalsIgnoreCase("consumeProduct")) {
+			consumeProduct(args, callbackContext);
 			return true;
 		}
 		return false;
@@ -179,39 +182,12 @@ public class WizPurchasePlugin extends CordovaPlugin {
 	// =================================================================================================
 
 	/**
-	 * Restore all Inventory products and purchases
-	 *
-	 * @param callbackContext Instance
-	 **/
-	private void restoreAll(CallbackContext callbackContext) throws JSONException {
-		// Check if the Inventory is available
-		if (mInventory != null) {
-			// Get and return any previously purchased Items
-			JSONArray jsonSkuList = new JSONArray();
-			jsonSkuList = getPurchases();
-			// Return result
-			callbackContext.success(jsonSkuList);
-		} else {
-			// Initialise the Plug-In
-			cordova.getThreadPool().execute(new Runnable() {
-				public void run() {
-					List<String> skus = new ArrayList<String>();
-					init(skus);
-				}
-			});
-			// Retain the callback and wait
-			mRestoreAllCbContext = callbackContext;
-			retainCallBack(mRestoreAllCbContext);
-		}
-	}
-
-	/**
 	 * Get All Products Details
 	 *
 	 * @param args List of Product id to be retrieved
 	 * @param callbackContext Instance
 	 **/
-	private void getProductsDetails(JSONArray args, CallbackContext callbackContext) throws JSONException {
+	private void requestStoreListing(JSONArray args, CallbackContext callbackContext) throws JSONException {
 		// Retrieve all given Product Ids
 		JSONArray jsonSkuList = new JSONArray(args.getString(0));
 		mRequestDetailSkus = new ArrayList<String>();
@@ -236,78 +212,7 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			});
 		}
 	}
-
-	/**
-	 * Make the Product Purchase
-	 *
-	 * @param args Product Id to be purchased and DeveloperPayload
-	 * @param callbackContext Instance
-	 **/
-	private void makePurchase(JSONArray args, CallbackContext callbackContext) throws JSONException {
-		// Retain the callback and wait
-		mMakePurchaseCbContext = callbackContext;
-		retainCallBack(mMakePurchaseCbContext);
-		// Instance the given product Id to be purchase
-		final String productId = args.getString(0);
-		// Update the DeveloperPayload with the given value. empty if not passed
-		mDevPayload = args.optString(1);
-
-		// Check if the Inventory is available
-		if (mInventory != null) {
-			// Set up the activity result callback to this class
-			cordova.setActivityResultCallback(this);
-			cordova.getThreadPool().execute(new Runnable() {
-				public void run() {
-					// Buy the product
-					buy(productId);
-				}
-			});
-		} else {
-			// Initialise the Plug-In adding the product to be purchased
-			cordova.getThreadPool().execute(new Runnable() {
-				public void run() {
-					List<String> skus = new ArrayList<String>();
-					skus.add(0, productId);
-					init(skus);
-				}
-			});
-		}
-	}
-
-	/**
-	 * Consume the Purchase
-	 *
-	 * @param args Product Id to be purchased and DeveloperPayload
-	 * @param callbackContext Instance
-	 **/
-	private void consumePurchase(JSONArray args, CallbackContext callbackContext) throws JSONException {
-		// Retain the callback and wait
-		mConsumeCbContext = callbackContext;
-		retainCallBack(mConsumeCbContext);
-
-		// Check if the Inventory is available
-		if (mInventory != null) {
-			// Consume product
-//cranberrygame start
-			//consumePurchase(args);
-			JSONArray jsonProductIdList = new JSONArray(args.getString(0));
-			consumePurchase(jsonProductIdList);
-//cranberrygame end
-		} else {
-			// Initialise the Plug-In
-			cordova.getThreadPool().execute(new Runnable() {
-				public void run() {
-					List<String> skus = new ArrayList<String>();
-					init(skus);
-				}
-			});
-		}
-	}
-
-	// =================================================================================================
-	//	Operation Methods
-	// =================================================================================================
-
+	
 	/**
 	 * Initialise the Plug-in
 	 *
@@ -356,7 +261,7 @@ public class WizPurchasePlugin extends CordovaPlugin {
 					return;
 				}
 
-				// In the case that the initialisation was made during the makePurchase action
+				// In the case that the initialisation was made during the purchaseProduct action
 				// We will have a product to purchase
 				if (mMakePurchaseCbContext != null) {
 					// This is a purchase request
@@ -375,7 +280,54 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			}
 		});
 	}
+	
+	/**
+	 * Get the SkuDetails
+	 *
+	 * @param skus List of product skus to be processed
+	 **/
+	private void getSkuDetails(final List<String> skus){
+		Log.d(TAG, "Querying inventory w/ SKUs.");
+		mHelper.queryInventoryAsync(true, skus, mGotDetailsListener);
+	}	
+	
+	/**
+	 * Make the Product Purchase
+	 *
+	 * @param args Product Id to be purchased and DeveloperPayload
+	 * @param callbackContext Instance
+	 **/
+	private void purchaseProduct(JSONArray args, CallbackContext callbackContext) throws JSONException {
+		// Retain the callback and wait
+		mMakePurchaseCbContext = callbackContext;
+		retainCallBack(mMakePurchaseCbContext);
+		// Instance the given product Id to be purchase
+		final String productId = args.getString(0);
+		// Update the DeveloperPayload with the given value. empty if not passed
+		mDevPayload = args.optString(1);
 
+		// Check if the Inventory is available
+		if (mInventory != null) {
+			// Set up the activity result callback to this class
+			cordova.setActivityResultCallback(this);
+			cordova.getThreadPool().execute(new Runnable() {
+				public void run() {
+					// Buy the product
+					buy(productId);
+				}
+			});
+		} else {
+			// Initialise the Plug-In adding the product to be purchased
+			cordova.getThreadPool().execute(new Runnable() {
+				public void run() {
+					List<String> skus = new ArrayList<String>();
+					skus.add(0, productId);
+					init(skus);
+				}
+			});
+		}
+	}
+	
 	/**
 	 * Buy the Product
 	 *
@@ -390,13 +342,43 @@ public class WizPurchasePlugin extends CordovaPlugin {
 				mPurchaseFinishedListener,
 				mDevPayload);
 	}
+	
+	/**
+	 * Consume the Purchase
+	 *
+	 * @param args Product Id to be purchased and DeveloperPayload
+	 * @param callbackContext Instance
+	 **/
+	private void consumeProduct(JSONArray args, CallbackContext callbackContext) throws JSONException {
+		// Retain the callback and wait
+		mConsumeCbContext = callbackContext;
+		retainCallBack(mConsumeCbContext);
+
+		// Check if the Inventory is available
+		if (mInventory != null) {
+			// Consume product
+//cranberrygame start
+			//consumeProduct(args);
+			JSONArray jsonProductIdList = new JSONArray(args.getString(0));
+			consumeProduct(jsonProductIdList);
+//cranberrygame end
+		} else {
+			// Initialise the Plug-In
+			cordova.getThreadPool().execute(new Runnable() {
+				public void run() {
+					List<String> skus = new ArrayList<String>();
+					init(skus);
+				}
+			});
+		}
+	}
 
 	/**
 	 * Consume a purchase
 	 *
 	 * @param data Sku or Array of skus of products to be consumed
 	 **/
-	private void consumePurchase(JSONArray data) throws JSONException{
+	private void consumeProduct(JSONArray data) throws JSONException{
 		// Returning Error Message
 		String errorMsg = "";
 
@@ -441,7 +423,34 @@ public class WizPurchasePlugin extends CordovaPlugin {
 //cranberrygame end
 		}
 	}
-
+	
+	/**
+	 * Restore all Inventory products and purchases
+	 *
+	 * @param callbackContext Instance
+	 **/
+	private void restorePurchases(CallbackContext callbackContext) throws JSONException {
+		// Check if the Inventory is available
+		if (mInventory != null) {
+			// Get and return any previously purchased Items
+			JSONArray jsonSkuList = new JSONArray();
+			jsonSkuList = getPurchases();
+			// Return result
+			callbackContext.success(jsonSkuList);
+		} else {
+			// Initialise the Plug-In
+			cordova.getThreadPool().execute(new Runnable() {
+				public void run() {
+					List<String> skus = new ArrayList<String>();
+					init(skus);
+				}
+			});
+			// Retain the callback and wait
+			mRestoreAllCbContext = callbackContext;
+			retainCallBack(mRestoreAllCbContext);
+		}
+	}
+		
 	/**
 	 * Get the list of purchases
 	 *
@@ -459,72 +468,11 @@ public class WizPurchasePlugin extends CordovaPlugin {
 		// Return the JSON list
 		return jsonPurchaseList;
 	}
-
-	/**
-	 * Get the SkuDetails
-	 *
-	 * @param skus List of product skus to be processed
-	 **/
-	private void getSkuDetails(final List<String> skus){
-		Log.d(TAG, "Querying inventory w/ SKUs.");
-		mHelper.queryInventoryAsync(true, skus, mGotDetailsListener);
-	}
-
+	
 	// =================================================================================================
 	//	Listeners Methods
 	// =================================================================================================
 
-	/**
-	 * Got Inventory Listener
-	 * Listener that's called when we finish querying the items and subscriptions we own
-	 **/
-	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-		public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-			Log.d(TAG, "Inside mGotInventoryListener");
-			// Check if there is error and update the Inventory
-			if (!hasErrorsAndUpdateInventory(result, inventory)) {}
-			Log.d(TAG, "Query inventory was successful.");
-
-			// Check if we have the handler
-			if (mRestoreAllCbContext != null) {
-				// This array holds Google data
-				JSONArray jsonSkuList;
-
-				// Create our new array for JavaScript
-				JSONArray skuList = new JSONArray();
-				try {
-					// Populate with Google data
-					jsonSkuList = getPurchases();
-
-					// Rebuild Object for JavaScript
-					for (int i = 0; i < jsonSkuList.length(); i++) {
-						JSONObject skuObject = new JSONObject();
-						skuObject = jsonSkuList.getJSONObject(i);
-
-						// Create return Object
-						JSONObject pendingObject = new JSONObject();
-						pendingObject.putOpt("platform", "android");
-						pendingObject.putOpt("orderId", skuObject.getString("orderId"));
-						pendingObject.putOpt("packageName", skuObject.getString("packageName"));
-						pendingObject.putOpt("productId", skuObject.getString("productId"));
-						pendingObject.putOpt("purchaseTime", skuObject.getString("purchaseTime"));
-						pendingObject.putOpt("purchaseState", skuObject.getString("purchaseState"));
-						pendingObject.putOpt("developerPayload", skuObject.getString("developerPayload"));
-						pendingObject.putOpt("receipt", skuObject.getString("purchaseToken"));
-
-						// Add new object into array
-						skuList.put(pendingObject);
-					}
-				} catch (JSONException e) { }
-
-				// Return result
-				mRestoreAllCbContext.success(skuList);
-				// Clear the handler instance
-				mRestoreAllCbContext = null;
-			}
-		}
-	};
-	
 	/**
 	 * Got SkuDetails Listener
 	 * Listener that's called when we finish querying the details of the products
@@ -602,6 +550,57 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			}
 		}
 	};	
+	
+	/**
+	 * Got Inventory Listener
+	 * Listener that's called when we finish querying the items and subscriptions we own
+	 **/
+	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+		public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+			Log.d(TAG, "Inside mGotInventoryListener");
+			// Check if there is error and update the Inventory
+			if (!hasErrorsAndUpdateInventory(result, inventory)) {}
+			Log.d(TAG, "Query inventory was successful.");
+
+			// Check if we have the handler
+			if (mRestoreAllCbContext != null) {
+				// This array holds Google data
+				JSONArray jsonSkuList;
+
+				// Create our new array for JavaScript
+				JSONArray skuList = new JSONArray();
+				try {
+					// Populate with Google data
+					jsonSkuList = getPurchases();
+
+					// Rebuild Object for JavaScript
+					for (int i = 0; i < jsonSkuList.length(); i++) {
+						JSONObject skuObject = new JSONObject();
+						skuObject = jsonSkuList.getJSONObject(i);
+
+						// Create return Object
+						JSONObject pendingObject = new JSONObject();
+						pendingObject.putOpt("platform", "android");
+						pendingObject.putOpt("orderId", skuObject.getString("orderId"));
+						pendingObject.putOpt("packageName", skuObject.getString("packageName"));
+						pendingObject.putOpt("productId", skuObject.getString("productId"));
+						pendingObject.putOpt("purchaseTime", skuObject.getString("purchaseTime"));
+						pendingObject.putOpt("purchaseState", skuObject.getString("purchaseState"));
+						pendingObject.putOpt("developerPayload", skuObject.getString("developerPayload"));
+						pendingObject.putOpt("receipt", skuObject.getString("purchaseToken"));
+
+						// Add new object into array
+						skuList.put(pendingObject);
+					}
+				} catch (JSONException e) { }
+
+				// Return result
+				mRestoreAllCbContext.success(skuList);
+				// Clear the handler instance
+				mRestoreAllCbContext = null;
+			}
+		}
+	};
 		
 	/**
 	 * Purchase Finished Listener
@@ -643,7 +642,8 @@ public class WizPurchasePlugin extends CordovaPlugin {
 			}
 
 			// Add the purchase to the inventory
-			mInventory.addPurchase(purchase);
+			if (purchase != null) //cranberrygame
+				mInventory.addPurchase(purchase);			
 		}
 	};
 

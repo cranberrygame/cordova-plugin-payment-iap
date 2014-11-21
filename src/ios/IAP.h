@@ -10,7 +10,7 @@
 #import <StoreKit/StoreKit.h>
 #import <Cordova/CDVPlugin.h>
 
-@interface WizPurchasePlugin : CDVPlugin <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
+@interface IAP : CDVPlugin <SKProductsRequestDelegate, SKPaymentTransactionObserver> {
     SKProductsResponse *productsResponse;
     NSString *getProductDetailsCb;
     NSString *makePurchaseCb;
@@ -20,11 +20,11 @@
 //cranberrygame start
 - (void)setUp: (CDVInvokedUrlCommand*)command;
 //cranberrygame end
+- (void)requestStoreListing:(CDVInvokedUrlCommand *)command;
+- (void)purchaseProduct:(CDVInvokedUrlCommand *)command;
+- (void)consumeProduct:(CDVInvokedUrlCommand *)command;
+- (void)restorePurchases:(CDVInvokedUrlCommand *)command;
 - (void)canMakePurchase:(CDVInvokedUrlCommand *)command;
-- (void)makePurchase:(CDVInvokedUrlCommand *)command;
-- (void)getProductDetail:(CDVInvokedUrlCommand *)command;
-- (void)consumePurchase:(CDVInvokedUrlCommand *)command;
 - (void)getPending:(CDVInvokedUrlCommand *)command;
-- (void)restoreAll:(CDVInvokedUrlCommand *)command;
 
 @end

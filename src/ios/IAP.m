@@ -1,15 +1,15 @@
-/* wizPurchasePlugin
+/* IAP
  *
  * @author Ally Ogilvie
  * @copyright Wizcorp Inc. [ Incorporated Wizards ] 2014
- * @file wizPurchasePlugin.m
+ * @file IAP.m
  *
  */
 
-#import "WizPurchasePlugin.h"
-#import "WizDebugLog.h"
+#import "IAP.h"
+#import "IAPDebugLog.h"
 
-@implementation WizPurchasePlugin
+@implementation IAP
 
 - (CDVPlugin *)initWithWebView:(UIWebView *)theWebView {
 
@@ -35,33 +35,7 @@
 }
 //cranberrygame end
 
-- (BOOL)canMakePurchase {
-    return [SKPaymentQueue canMakePayments];
-}
-
-- (void)canMakePurchase:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        if ([self canMakePurchase]) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"unknownProductId"];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)restoreAll:(CDVInvokedUrlCommand *)command {
-    WizLog(@"Restoring purchase");
-
-    restorePurchaseCb = command.callbackId;
-    // [self.commandDelegate runInBackground:^{
-        // Call this to get any previously purchased non-consumables
-        [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
-    // }];
-}
-
-- (void)getProductDetail:(CDVInvokedUrlCommand *)command {
+- (void)requestStoreListing:(CDVInvokedUrlCommand *)command {
     WizLog(@"Getting products details");
     
     getProductDetailsCb = command.callbackId;
@@ -70,25 +44,15 @@
     }];
 }
 
-- (void)consumePurchase:(CDVInvokedUrlCommand *)command {
-    // Remove any receipt(s) from NSUserDefaults matching productIds, we have verified with a server
-    NSArray *productIds = [command.arguments objectAtIndex:0];
-    for (NSString *productId in productIds) {
-        // Remove receipt from storage
-        [self removeReceipt:productId];
-    }
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+- (void)fetchProducts:(NSArray *)productIdentifiers {
+    WizLog(@"Fetching product information");
+    // Build a SKProductsRequest for the identifiers provided
+    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:productIdentifiers]];
+    productsRequest.delegate = self;
+    [productsRequest start];
 }
 
-- (void)getPending:(CDVInvokedUrlCommand *)command {
-    // Return contents of user defaults
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                       messageAsArray:[self fetchReceipts]];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)makePurchase:(CDVInvokedUrlCommand *)command {
+- (void)purchaseProduct:(CDVInvokedUrlCommand *)command {
     NSString *productId = [command.arguments objectAtIndex:0];
     makePurchaseCb = command.callbackId;
     
@@ -117,30 +81,15 @@
     }];
 }
 
-- (void)fetchProducts:(NSArray *)productIdentifiers {
-    WizLog(@"Fetching product information");
-    // Build a SKProductsRequest for the identifiers provided
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:productIdentifiers]];
-    productsRequest.delegate = self;
-    [productsRequest start];
-}
-
-- (NSArray *)fetchReceipts {
-    WizLog(@"Fetching receipts");
-#if USE_ICLOUD_STORAGE
-    NSUbiquitousKeyValueStore *storage = [NSUbiquitousKeyValueStore defaultStore];
-#else
-    NSUserDefaults *storage = [NSUserDefaults standardUserDefaults];
-#endif
-    
-    NSArray *savedReceipts = [storage arrayForKey:@"receipts"];
-    if (!savedReceipts) {
-        // None found
-        return @[ ];
-    } else {
-        // Return array
-        return savedReceipts;
+- (void)consumeProduct:(CDVInvokedUrlCommand *)command {
+    // Remove any receipt(s) from NSUserDefaults matching productIds, we have verified with a server
+    NSArray *productIds = [command.arguments objectAtIndex:0];
+    for (NSString *productId in productIds) {
+        // Remove receipt from storage
+        [self removeReceipt:productId];
     }
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)removeReceipt:(NSString *)productId {
@@ -166,8 +115,41 @@
     }
 }
 
-- (void)backupReceipt:(NSDictionary *)result {
-    WizLog(@"Backing up receipt");
+- (void)restorePurchases:(CDVInvokedUrlCommand *)command {
+    WizLog(@"Restoring purchase");
+
+    restorePurchaseCb = command.callbackId;
+    // [self.commandDelegate runInBackground:^{
+        // Call this to get any previously purchased non-consumables
+        [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+    // }];
+}
+
+- (void)canMakePurchase:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult *pluginResult;
+        if ([self canMakePurchase]) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"unknownProductId"];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+- (BOOL)canMakePurchase {
+    return [SKPaymentQueue canMakePayments];
+}
+
+- (void)getPending:(CDVInvokedUrlCommand *)command {
+    // Return contents of user defaults
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                       messageAsArray:[self fetchReceipts]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (NSArray *)fetchReceipts {
+    WizLog(@"Fetching receipts");
 #if USE_ICLOUD_STORAGE
     NSUbiquitousKeyValueStore *storage = [NSUbiquitousKeyValueStore defaultStore];
 #else
@@ -176,21 +158,17 @@
     
     NSArray *savedReceipts = [storage arrayForKey:@"receipts"];
     if (!savedReceipts) {
-        // Storing the first receipt
-        [storage setObject:@[result] forKey:@"receipts"];
+        // None found
+        return @[ ];
     } else {
-        // Adding another receipt
-        NSArray *updatedReceipts = [savedReceipts arrayByAddingObject:result];
-        [storage setObject:updatedReceipts forKey:@"receipts"];
+        // Return array
+        return savedReceipts;
     }
-    [storage synchronize];
 }
+
+//---------------------------------------------------------
 
 # pragma Methods for SKProductsRequestDelegate
-
-- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    WizLog(@"request - didFailWithError: %@", [[error userInfo] objectForKey:@"NSLocalizedDescription"]);
-}
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     // Receiving a list of products from Apple
@@ -239,7 +217,7 @@
             return;
         }
        
-        // If you request all productIds we create a shortcut here for doing makePurchase
+        // If you request all productIds we create a shortcut here for doing purchaseProduct
         // it saves on http requests
         productsResponse = (SKProductsResponse *)response;
         
@@ -272,6 +250,10 @@
     }
 }
 
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+    WizLog(@"request - didFailWithError: %@", [[error userInfo] objectForKey:@"NSLocalizedDescription"]);
+}
+
 # pragma Methods for SKPaymentTransactionObserver
 
 //cranberrygame start
@@ -286,17 +268,11 @@
 //cranberrygame end
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
     if (restorePurchaseCb != NULL) {
-//cranberrygame start	
         //NSArray *receipts;
 		NSMutableArray *purchasedProducts = [NSMutableArray array];
-//cranberrygame end		
         if ([[[SKPaymentQueue defaultQueue] transactions] count] > 0) {
             for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions]) {
-//cranberrygame start			
-/*
-				// Build array of restored receipt items
-                [purchasedProducts arrayByAddingObject:[transaction transactionReceipt]];
-*/				
+
                 // Immediately save to NSUserDefaults incase we cannot reach JavaScript in time
                 // or connection for server receipt verification is interupted
                 NSString *receipt = [[NSString alloc] initWithData:[transaction transactionReceipt] encoding:NSUTF8StringEncoding];
@@ -311,14 +287,7 @@
                 
 				[purchasedProducts addObject:result];
             }				
-//cranberrygame end
         } 
-/*		
-		else {
-            receipts = [[NSArray alloc] init];
-        }
-*/
-//cranberrygame end
 
         // Return result to JavaScript
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -327,19 +296,6 @@
         restorePurchaseCb = NULL;
     }
 }
-
-- (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
-    if (restorePurchaseCb != NULL) {
-        // Convert error code to String
-        NSString *errorString = [self returnErrorString:error];
-        // Return result to JavaScript
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                          messageAsString:errorString];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:restorePurchaseCb];
-        restorePurchaseCb = NULL;
-    }
-}
-
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
 
@@ -423,6 +379,38 @@
         // Your app needs to finish every transaction, regardles of whether the transaction succeeded or failed.
 		[[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     }
+}
+
+- (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
+    if (restorePurchaseCb != NULL) {
+        // Convert error code to String
+        NSString *errorString = [self returnErrorString:error];
+        // Return result to JavaScript
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                          messageAsString:errorString];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:restorePurchaseCb];
+        restorePurchaseCb = NULL;
+    }
+}
+
+- (void)backupReceipt:(NSDictionary *)result {
+    WizLog(@"Backing up receipt");
+#if USE_ICLOUD_STORAGE
+    NSUbiquitousKeyValueStore *storage = [NSUbiquitousKeyValueStore defaultStore];
+#else
+    NSUserDefaults *storage = [NSUserDefaults standardUserDefaults];
+#endif
+    
+    NSArray *savedReceipts = [storage arrayForKey:@"receipts"];
+    if (!savedReceipts) {
+        // Storing the first receipt
+        [storage setObject:@[result] forKey:@"receipts"];
+    } else {
+        // Adding another receipt
+        NSArray *updatedReceipts = [savedReceipts arrayByAddingObject:result];
+        [storage setObject:updatedReceipts forKey:@"receipts"];
+    }
+    [storage synchronize];
 }
 
 - (NSString *)returnErrorString:(NSError *)error {

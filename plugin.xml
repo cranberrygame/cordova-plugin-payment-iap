@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.cranberrygame.phonegap.plugin.iap"
-    version="2.0.7">
+    version="2.0.10">
 
 	<name>Phonegap IAP plugin</name>
     <description>Phonegap IAP plugin</description>
@@ -15,15 +15,15 @@
 	    <engine name="cordova" version=">=3.0.0" />
 	</engines>
 	
-    <js-module src="www/wizPurchasePlugin.js">
-        <clobbers target="window.wizPurchase" />
+    <js-module src="www/iap.js">
+        <clobbers target="window.iap" />
     </js-module>
     
     <!-- android -->
     <platform name="android">    
 		<config-file target="res/xml/config.xml" parent="/*">
-			<feature name="wizPurchasePlugin" >
-				<param name="android-package" value="jp.wizcorp.phonegap.plugin.wizPurchase.WizPurchasePlugin"/>
+			<feature name="IAP" >
+				<param name="android-package" value="jp.wizcorp.phonegap.plugin.wizPurchase.IAP"/>
 			</feature>
 	    </config-file>
 	    
@@ -31,7 +31,7 @@
 			<uses-permission android:name="com.android.vending.BILLING" />
         </config-file>		
 		
-	    <source-file src="src/android/WizPurchasePlugin.java" target-dir="src/jp/wizcorp/phonegap/plugin/wizPurchase"/>
+	    <source-file src="src/android/IAP.java" target-dir="src/jp/wizcorp/phonegap/plugin/wizPurchase"/>
 	            
 	    <source-file src="src/android/Base64.java" target-dir="src/com/smartmobilesoftware/util"/>
 	    <source-file src="src/android/Base64DecoderException.java" target-dir="src/com/smartmobilesoftware/util"/>
@@ -48,27 +48,22 @@
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-		    <feature name="wizPurchasePlugin">
-		        <param name="ios-package" value="WizPurchasePlugin" />
+		    <feature name="IAP">
+		        <param name="ios-package" value="IAP" />
 		        <param name="onload" value="true" />
 		    </feature>
         </config-file>
                
-        <header-file src="src/ios/WizPurchasePlugin.h" />
-        <source-file src="src/ios/WizPurchasePlugin.m" />        
+        <header-file src="src/ios/IAP.h" />
+        <source-file src="src/ios/IAP.m" />        
 
-        <header-file src="src/ios/WizDebugLog.h" />
+        <header-file src="src/ios/IAPDebugLog.h" />
         
         <framework src="StoreKit.framework" />                	
     </platform>
 	
 	<!-- wp8 -->
-<!--	
 	<platform name="wp8">
-        <js-module src="www/wp8/iap.js">
-            <clobbers target="window.iap" />
-        </js-module>
-		
         <config-file target="config.xml" parent="/*">
             <feature name="IAP">
                 <param name="wp-package" value="IAP"/>
@@ -77,5 +72,4 @@
 
         <source-file src="src/wp8/IAP.cs" />
     </platform>	
--->	
 </plugin>
