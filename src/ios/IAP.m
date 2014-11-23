@@ -223,8 +223,7 @@
         // it saves on http requests
         productsResponse = (SKProductsResponse *)response;
         
-        NSDictionary *product = NULL;
-        NSMutableDictionary *productsDictionary = [[NSMutableDictionary alloc] init];
+		NSMutableArray *productDetails = [NSMutableArray array];		
         WizLog(@"Products found: %i", [response.products count]);
         for (SKProduct *obj in response.products) {
             // Build a detailed product list from the list of valid products
@@ -236,17 +235,17 @@
             [numberFormatter setLocale:obj.priceLocale];
             NSString *formattedPrice = [numberFormatter stringFromNumber:obj.price];
             
-            product = @{
-                @"name":        obj.localizedTitle,
+            NSDictionary *product = @{
+                @"productId":   obj.productIdentifier,
+                @"title":       obj.localizedTitle,
                 @"price":       formattedPrice,
                 @"description": obj.localizedDescription
             };
             
-            [productsDictionary setObject:product forKey:obj.productIdentifier];
+			[productDetails addObject:product];
         }
         
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:productsDictionary];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:productDetails];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:getProductDetailsCb];
         getProductDetailsCb = NULL;
     }

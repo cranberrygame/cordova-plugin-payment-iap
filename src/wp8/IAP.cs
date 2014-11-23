@@ -49,6 +49,7 @@ namespace Cordova.Extension.Commands
             public string price { get; set; }
         }
 				
+		//http://msdn.microsoft.com/en-us/library/windows/apps/jj206950(v=vs.105).aspx
         public async void requestStoreListing(string args)
         {
 			try
@@ -113,6 +114,7 @@ namespace Cordova.Extension.Commands
 
         public async void consumeProduct(string args)
         {
+/*		
             string productId = JsonHelper.Deserialize<string[]>(args)[0];		
             Debug.WriteLine("productId: " + productId);
 			
@@ -120,6 +122,7 @@ namespace Cordova.Extension.Commands
 			{
 				try
 				{
+					//http://stackoverflow.com/questions/16192783/in-app-purchase-consumable-product-responding-error
 					CurrentApp.ReportProductFulfillment(productId);
 
 					DispatchCommandResult(new PluginResult(PluginResult.Status.OK, ""));
@@ -132,7 +135,25 @@ namespace Cordova.Extension.Commands
 			else
 			{
 				//Already owns the product
-			}			
+			}
+*/
+			string[] productIds = JsonHelper.Deserialize<string[]>(args);
+			try
+			{
+				for (int i =0 ; i < productIds.length ; i++) {
+					string productId = productIds[i];
+					if (CurrentApp.LicenseInformation.ProductLicenses[productId].IsActive)
+					{
+						//http://stackoverflow.com/questions/16192783/in-app-purchase-consumable-product-responding-error
+						CurrentApp.ReportProductFulfillment(productId);
+					}
+				}
+				DispatchCommandResult(new PluginResult(PluginResult.Status.OK, ""));
+			}
+			catch
+			{		
+				DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Unknown Error"));
+			}				
         }
 
 		public async void restorePurchases(string args)

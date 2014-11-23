@@ -498,7 +498,7 @@ public class IAP extends CordovaPlugin {
 				List<SkuDetails>skuList = inventory.getAllProducts();
 
 				// Build the return Object
-				JSONObject skusObject = new JSONObject();
+				JSONArray skuJSONArray = new JSONArray();				
 
 				Log.d(TAG, "skuList: " + skuList);
 				if (skuList != null && !skuList.isEmpty()) {
@@ -524,12 +524,13 @@ public class IAP extends CordovaPlugin {
 								try {
 									// Fill the sku details
 									skuObject.put("productId", sku.getSku());
+									skuObject.put("title", sku.getTitle());
 									skuObject.put("price", sku.getPrice());
 									skuObject.put("description", sku.getDescription());
-									skuObject.put("name", sku.getTitle());
 									skuObject.put("json", sku.toJson());
 									// Add the current sku details to the returning object
-									skusObject.put(sku.getSku(), skuObject);
+									skuJSONArray.put(skuObject);
+
 								} catch (JSONException e) { }
 							}
 						}
@@ -545,7 +546,7 @@ public class IAP extends CordovaPlugin {
 				// At this point return the success for all we got (even an empty Inventory)
 				// All what we found in here is all the sku who actually does exist in the developer inventory
 				// If something is missing the developer will refine his query
-				mProductDetailCbContext.success(skusObject);
+				mProductDetailCbContext.success(skuJSONArray);
 				mProductDetailCbContext = null;
 			}
 		}
@@ -565,13 +566,12 @@ public class IAP extends CordovaPlugin {
 			// Check if we have the handler
 			if (mRestoreAllCbContext != null) {
 				// This array holds Google data
-				JSONArray jsonSkuList;
 
 				// Create our new array for JavaScript
 				JSONArray skuList = new JSONArray();
 				try {
 					// Populate with Google data
-					jsonSkuList = getPurchases();
+					JSONArray jsonSkuList = getPurchases();
 
 					// Rebuild Object for JavaScript
 					for (int i = 0; i < jsonSkuList.length(); i++) {
