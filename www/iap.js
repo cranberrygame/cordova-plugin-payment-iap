@@ -14,28 +14,28 @@ module.exports = {
 		); 
 	},
 //cranberrygame end	
-	requestStoreListing: function (productIds, s, f) {
+	requestStoreListing: function (productIds, successCallback, failureCallback) {
 		if (!productIds || productIds.length == 0) {
-			return s({});
+			return successCallback({});
 		}
 		if (Object.prototype.toString.call(productIds) === '[object String]') {
 			// In the event one productId is passed in as String we shall put it in
 			// an array to be easily dealt with natively.
 			productIds = [ productIds ];
 		}
-		cordova.exec(s, f, "IAP", "requestStoreListing", [ productIds ]);	
+		cordova.exec(successCallback, failureCallback, "IAP", "requestStoreListing", [ productIds ]);	
 	},
 
-	purchaseProduct: function(productId, s, f) {
+	purchaseProduct: function(productId, successCallback, failureCallback) {
 		if (!productId) {
-			return f("noProductId");
+			return failureCallback("noProductId");
 		}
-		cordova.exec(s, f, "IAP", "purchaseProduct", [ productId ]);		
+		cordova.exec(successCallback, failureCallback, "IAP", "purchaseProduct", [ productId ]);		
 	},	
 
-	consumeProduct: function (receipt, s, f) {
+	consumeProduct: function (receipt, successCallback, failureCallback) {
 		if (!receipt || receipt.length == 0) {
-			return s();
+			return successCallback();
 		}
 		if (Object.prototype.toString.call(receipt) === '[object String]') {
 			// In the event one receipt is passed in as String we shall put it in
@@ -43,18 +43,18 @@ module.exports = {
 			receipt = [ receipt ];
 		}
 	   
-		cordova.exec(s, f, "IAP", "consumeProduct", [ receipt ]);
+		cordova.exec(successCallback, failureCallback, "IAP", "consumeProduct", [ receipt ]);
 	},	
 
-	restorePurchases: function (s, f) {
-		cordova.exec(s, f, "IAP", "restorePurchases", []);
+	restorePurchases: function (successCallback, failureCallback) {
+		cordova.exec(successCallback, failureCallback, "IAP", "restorePurchases", []);
 	},	
 
-	canMakePurchase: function(s, f) {
-		cordova.exec(s, f, "IAP", "canMakePurchase", []);		
+	canMakePurchase: function(successCallback, failureCallback) {
+		cordova.exec(successCallback, failureCallback, "IAP", "canMakePurchase", []);		
 	},
 	
-	getPending: function (s, f) {
-		cordova.exec(s, f, "IAP", "getPending", []);
+	getPending: function (successCallback, failureCallback) {
+		cordova.exec(successCallback, failureCallback, "IAP", "getPending", []);
 	}
 };

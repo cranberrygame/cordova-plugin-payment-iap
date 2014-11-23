@@ -69,16 +69,16 @@
             }
         }
     }
-    
+	
     [self.commandDelegate runInBackground:^{
         if (product != NULL) {
-            // We can shortcut an HTTP request, this product has been requested before
-            [self productsRequest:NULL didReceiveResponse:(SKProductsResponse *)productsResponse];
+            SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+            [[SKPaymentQueue defaultQueue] addPayment:payment];
         } else {
             // We need to fetch the product
             [self fetchProducts:@[ productId ]];
         }
-    }];
+    }];	
 }
 
 - (void)consumeProduct:(CDVInvokedUrlCommand *)command {
@@ -173,6 +173,7 @@
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     // Receiving a list of products from Apple
     
+/*	
     if (makePurchaseCb != NULL) {
         
         if ([response.invalidProductIdentifiers count] > 0) {
@@ -201,6 +202,7 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:makePurchaseCb];
         makePurchaseCb = NULL;
     }
+*/
     
     if (getProductDetailsCb != NULL) {
         // Continue product(s) list request
