@@ -45,8 +45,8 @@ namespace Cordova.Extension.Commands
         {
             public string productId { get; set; }
             public string title { get; set; }
-            public string description { get; set; }
             public string price { get; set; }
+            public string description { get; set; }
         }
 				
 		//http://msdn.microsoft.com/en-us/library/windows/apps/jj206950(v=vs.105).aspx
@@ -67,8 +67,8 @@ namespace Cordova.Extension.Commands
 					{
 						productId = pl.ProductId,
 						title = pl.Name,
-						description = pl.Description,
-						price = pl.FormattedPrice
+						price = pl.FormattedPrice,
+						description = pl.Description
 					};
 					string json = JsonHelper.Serialize(p);
 					products.Add(json);
@@ -174,8 +174,8 @@ namespace Cordova.Extension.Commands
 						{
 							productId = pl.ProductId,
 							title = pl.Name,
-							description = pl.Description,
-							price = pl.FormattedPrice
+							price = pl.FormattedPrice,
+							description = pl.Description
 						};
 						string json = JsonHelper.Serialize(p);
 						products.Add(json);						

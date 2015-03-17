@@ -435,8 +435,29 @@ public class IAP extends CordovaPlugin {
 			// Get and return any previously purchased Items
 			JSONArray jsonSkuList = new JSONArray();
 			jsonSkuList = getPurchases();
+			
+//cranberrygame start			
+/*
 			// Return result
-			callbackContext.success(jsonSkuList);
+			callbackContext.success(jsonSkuList);			
+*/			
+			if (jsonSkuList.length() > 0) {
+				PluginResult pr = new PluginResult(PluginResult.Status.OK, jsonSkuList);
+				//pr.setKeepCallback(true);
+				callbackContext.sendPluginResult(pr);
+				//PluginResult pr = new PluginResult(PluginResult.Status.ERROR);
+				//pr.setKeepCallback(true);
+				//callbackContext.sendPluginResult(pr);			
+			}
+			else {
+				//PluginResult pr = new PluginResult(PluginResult.Status.OK);
+				//pr.setKeepCallback(true);
+				//callbackContext.sendPluginResult(pr);
+				PluginResult pr = new PluginResult(PluginResult.Status.ERROR, "no purchased data");
+				//pr.setKeepCallback(true);
+				callbackContext.sendPluginResult(pr);			
+			}
+//cranberrygame end			
 		} else {
 			// Initialise the Plug-In
 			cordova.getThreadPool().execute(new Runnable() {

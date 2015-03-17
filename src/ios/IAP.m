@@ -290,10 +290,30 @@
             }				
         } 
 
+//cranberrygame start		
+/*
         // Return result to JavaScript
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                           messageAsArray:purchasedProducts];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:purchasedProducts];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:restorePurchaseCb];
+*/	
+		if ([purchasedProducts count] > 0) {
+			CDVPluginResult* pr = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:purchasedProducts];
+			//[pr setKeepCallbackAsBool:YES];
+			[self.commandDelegate sendPluginResult:pr callbackId:restorePurchaseCb];
+			//CDVPluginResult* pr = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+			//[pr setKeepCallbackAsBool:YES];
+			//[self.commandDelegate sendPluginResult:pr callbackId:restorePurchaseCb];		
+		}
+		else {
+			//CDVPluginResult* pr = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+			//[pr setKeepCallbackAsBool:YES];
+			//[self.commandDelegate sendPluginResult:pr callbackId:restorePurchaseCb];
+			CDVPluginResult* pr = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"no purchased data"];
+			//[pr setKeepCallbackAsBool:YES];
+			[self.commandDelegate sendPluginResult:pr callbackId:restorePurchaseCb];		
+		}		
+//cranberrygame end
+		
         restorePurchaseCb = NULL;
     }
 }
