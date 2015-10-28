@@ -1,0 +1,105 @@
+<html>
+<head>
+	<script type="text/javascript" src="cordova.js"></script>
+</head>
+<body>
+
+<script>
+
+var androidApplicationLicenseKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtrOQsWiUYfQ65MjUam2zu2DgoBkOsaoelFQHWzRkAT+KHr1xPIOF5JUeQs/XWtNjRI4pavBrRveB3xnoKE+WxvILh4N+3Kl11/i0r9B6/LBae8V8WZpArEIIvh3rgowDGTO0B6sfWO71iP9EStmwziBI4sDOMuPensBSmj8bxj3hhNEzyRJvQbybdNgAD2xoy55+S0kgLHE3PbZwqogJf1pPIGSmhC2SXSrMXoJzxeMxM8/hN7VoVj9VAJxzOE3zR9he9npiDWGLsPnAIXggUN9Ys0h80YjwRl7GHLP0P/itBo28w4+qOqz2E34SFFInAqX7evtrMu3AkfYcX+FPuQIDAQAB";
+var productIds = "testapp_removeads,testapp_coinpack1,testapp_coinpack2,testapp_coinpack3";
+var existing_purchases = [];
+var product_info = {};
+		
+document.addEventListener("deviceready", function(){
+
+	window.iap.setUp(androidApplicationLicenseKey);
+
+	//get all products' infos for all productIds
+	window.iap.requestStoreListing(productIds, function (result){
+	/*
+	[
+		{
+			"productId": "sword001",
+			"title": "Sword of Truths",
+			"price": "Formatted price of the item, including its currency sign.",
+			"description": "Very pointy sword. Sword knows if you are lying, so don't lie."
+		},
+		{
+			"productId": "shield001",
+			"title": "Shield of Peanuts",
+			"price": "Formatted price of the item, including its currency sign.",
+			"description": "A shield made entirely of peanuts."
+		}
+	]
+	*/
+	//alert(JSON.stringify(result));
+
+		for (var i = 0 ; i < result.length; ++i){
+			var p = result[i];
+			
+			product_info[p["productId"]] = { title: p["title"], price: p["price"] };			
+			
+			alert("productId: "+p["productId"]);
+			alert("title: "+p["title"]);
+			alert("price: "+p["price"]);
+		}
+	}, function (error){
+		alert("error: "+error);
+	});
+}, false);
+	
+function purchaseProduct(productId) {
+	
+	//purchase product id, put purchase product id info into server.
+	window.iap.purchaseProduct(productId, function (result){
+		alert("purchaseProduct");
+	}, 
+	function (error){
+		alert("error: "+error);
+	});
+}
+
+function consumeProduct(productId) {
+	//consume product id, throw away purchase product id info from server.
+	window.iap.consumeProduct(productId, function (result){
+		alert("purchaseProduct");
+	}, 
+	function (error){
+		alert("error: "+error);
+	});	
+}
+
+function restorePurchases() {
+	//get user's purchased product ids which purchased before and not cunsumed.
+	window.iap.restorePurchases(function (result){
+		for (var i = 0 ; i < result.length; ++i){
+			var p = result[i];
+			
+			if (self.existing_purchases.indexOf(p['productId']) === -1)
+				self.existing_purchases.push(p['productId']);			
+
+			alert("productId: "+p['productId']);
+		}
+	}, 
+	function (error){
+		alert("error: "+error);
+	});
+}
+
+function hasProduct = function (productId){
+	return existing_purchases.indexOf(productId) !== -1;
+};
+	
+</script>
+
+<p><button onclick="purchaseProduct('testapp_removeads');">purchaseProduct('testapp_removeads');</button></p>
+<p><button onclick="restorePurchases();">restorePurchases();</button></p>
+<p><button onclick="alert(hasProduct('testapp_removeads'));">alert(hasProduct('testapp_removeads'));</button></p>
+<p><button onclick="purchaseProduct('testapp_coinpack1');">purchaseProduct('testapp_coinpack1');</button></p>
+<p><button onclick="consumeProduct('testapp_coinpack1');">purchaseProduct('testapp_coinpack1');</button></p>
+<p><button onclick="restorePurchases();">restorePurchases();</button></p>
+<p><button onclick="alert(hasProduct('testapp_coinpack1'));">alert(hasProduct('testapp_coinpack1'));</button></p>
+
+</body>
+</html>

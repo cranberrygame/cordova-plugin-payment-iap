@@ -209,7 +209,7 @@
         
         if ([response.invalidProductIdentifiers count] > 0) {
             for (NSString *invalidProductId in response.invalidProductIdentifiers) {
-                WizLog(@"Invalid product id: %@" , invalidProductId);
+                NSLog(@"Invalid product id: %@" , invalidProductId);
             }
             // We have requested at least one invalid product fallout here for security
             CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR

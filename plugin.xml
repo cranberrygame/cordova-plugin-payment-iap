@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-payment-iap"
-    version="2.0.39">
+    version="2.0.40">
 
 	<name>Cordova IAP plugin</name>
     <description>Cordova IAP plugin</description>
