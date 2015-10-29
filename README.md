@@ -115,8 +115,6 @@ Screen capture (1242x2208)
 
 See doc/iOS Simulator Screen Shot_iPhone 6 Plus.png
 ```
-<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/iossandbox1.png">
-<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/iossandbox2.png">
 
 should_agree_with_paid_applications_contracts
 <img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/contracts1.png">
