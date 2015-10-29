@@ -40,12 +40,10 @@ cordova plugin add cordova-plugin-payment-iap
 ```
 
 ## Xdk ##
-https://software.intel.com/en-us/intel-xdk - Download XDK - XDK PORJECTS - [specific project] - CORDOVA HYBRID MOBILE APP SETTINGS - Plugins - Third Party Plugins - Add a Third Party Plugin - Get Plugin from the Web -
+https://software.intel.com/en-us/intel-xdk - Download XDK - XDK PORJECTS - [specific project] - CORDOVA HYBRID MOBILE APP SETTINGS - Plugin Management - Add Plugins to this Project - Third Party Plugins -
 ```c
-Name: iap
+Plugin Source: Cordova plugin registry
 Plugin ID: cordova-plugin-payment-iap
-[Do not check] Plugin is located in the Apache Cordova Plugins Registry
-Repo URL: https://github.com/cranberrygame/cordova-plugin-payment-iap
 ```
 
 ## Cocoon ##
@@ -54,22 +52,7 @@ https://cocoon.io - Create project - [specific project] - Setting - Plugins - Cu
 ## Phonegap build service (config.xml) ##
 https://build.phonegap.com/ - Apps - [specific project] - Update code - Zip file including config.xml
 ```c
-<gap:plugin name="cordova-plugin-ad-admob" source="npm" />
-
-//If you want to mediate admob with other ad networks, then install the following additional ad networks you want to mediate with. (but too many mediations will increase app size)
-<gap:plugin name="cordova-plugin-ad-admob-adcolony" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-facebookads" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-flurryads" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-huntmads" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-iad" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-inmobi" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-leadbolt" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-lifestreetmedia" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-millennialmedia" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-mobfox" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-mojiva" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-mopub" source="npm" />
-<gap:plugin name="cordova-plugin-ad-admob-phunware" source="npm" />
+<gap:plugin name="cordova-plugin-payment-iap" source="npm" />
 ```
 
 ## Construct2 ##
@@ -314,8 +297,9 @@ Select "Xcode - iPhone" (Ad Hoc)
 - Product
 - Run
 ```
-<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/iossandbox1.png">
-<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/iossandbox2.png">
+<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/tester1_iossandbox1.png">
+<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/tester1_iossandbox2.png">
+<img src="https://raw.githubusercontent.com/cranberrygame/cordova-plugin-payment-iap/master/doc/tester2_testflight.png">
 
 ## Wp8 ##
 ```c
