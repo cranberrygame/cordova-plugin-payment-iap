@@ -96,7 +96,7 @@ google play developer console - [specific app] - Services & APis - license and i
 //accept paid agreement if you are adding your first app on iOS (contributed by tabrez)
 
 //add in app product (nonconsumable)
-itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Non Consumable - Select - Reference Name: testapp_removeads, Product ID: testapp_removeads - 언어 추가 - 언어: English, Display Name : Remove Ads, Description: Remove ads - Screenshot for Review (screen shot where PurchaseFullVersion button exists)
+itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Non Consumable - Select - Reference Name: testapp_removeads, Product ID: testapp_removeads - 언어 추가 - 언어: English, Display Name : Remove Ads, Description: You can purchase remove ads by tapping "Remove Ads" button. And you can also restore previous purchases by tapping "Restore" button. - Screenshot for Review (screen shot where "Remove Ads" button and "Restore" button exist)
 
 //add in app product (consumable)
 itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Consumable - Select - Reference Name: testapp_coinpack1, Product ID: testapp_coinpack1 - 언어 추가 - 언어: English, Display Name : Coin Pack1 (250 Coins), Description: Coin Pack1 (250 Coins) - Screenshot for Review (screen shot where PurchaseConsumablePack button exists)
