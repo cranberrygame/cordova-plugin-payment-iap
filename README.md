@@ -73,7 +73,7 @@ Your app doesn't have any in-app products yet.
 To add in-app products, you need to add the BILLING permission to your APK.
 
 //add in app product (nonconsumable)
-google play developer console - [specific app] - in app product - add - managed, product ID: testapp_removeads - Name : Remove Ads, Description: Remove ads - set active
+google play developer console - [specific app] - in app product - add - managed, product ID: testapp_removeads - Name : Remove Ads, Description: You can purchase remove ads by tapping "Remove Ads" button. And you can also restore previous purchases by tapping "Restore" button. - set active
 
 //add in app product (consumable)
 google play developer console - [specific app] - in app product - add - unmanaged, product ID: testapp_coinpack1 - Name : Coin Pack1 (250 Coins), Description: Coin pack1 (250 Coins) - set active

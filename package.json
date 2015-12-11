@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-payment-iap",
-  "version": "2.0.43",
+  "version": "2.0.44",
   "description": "Cordova IAP plugin",
   "cordova": {
     "id": "cordova-plugin-payment-iap",
