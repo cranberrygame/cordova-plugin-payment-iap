@@ -15,7 +15,7 @@
 	    <engine name="cordova" version=">=3.0.0" />
 	</engines>
 	
-    <js-module src="www/iap.js">
+    <js-module src="www/iap.js" name="iap">
         <clobbers target="window.iap" />
     </js-module>
     
