@@ -213,17 +213,24 @@ public class IAP extends CordovaPlugin {
 	 * @param callbackContext Instance
 	 **/
 	private void requestStoreListing(JSONArray args, CallbackContext callbackContext) throws JSONException {
-		// Retrieve all given Product Ids
-		JSONArray jsonSkuList = new JSONArray(args.getString(0));
-		mRequestDetailSkus = new ArrayList<String>();
-		// Populate productId list
-		for (int i = 0; i < jsonSkuList.length(); i++) {
-			mRequestDetailSkus.add(jsonSkuList.get(i).toString());
+		
+		try {
+			// Retrieve all given Product Ids
+			JSONArray jsonSkuList = new JSONArray(args.getString(0));
+			mRequestDetailSkus = new ArrayList<String>();
+			// Populate productId list
+			for (int i = 0; i < jsonSkuList.length(); i++) {
+				mRequestDetailSkus.add(jsonSkuList.get(i).toString());
+			}
+			// Retain the callback and wait
+			mProductDetailCbContext = callbackContext;
+			retainCallBack(mProductDetailCbContext);
 		}
-		// Retain the callback and wait
-		mProductDetailCbContext = callbackContext;
-		retainCallBack(mProductDetailCbContext);
-
+		catch(Exception ex) {
+			Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
+			Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
+		}
+			
 		// Check if the Inventory is available
 		if (mInventory != null) {
 			// Get all the Sku details for the List
