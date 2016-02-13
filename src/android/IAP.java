@@ -28,6 +28,27 @@ import com.smartmobilesoftware.util.IabResult;
 import com.smartmobilesoftware.util.Inventory;
 import com.smartmobilesoftware.util.SkuDetails;
 
+//Util
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+class Util {
+
+	//ex) Util.alert(cordova.getActivity(),"message");
+	public static void alert(Activity activity, String message) {
+		AlertDialog ad = new AlertDialog.Builder(activity).create();  
+		ad.setCancelable(false); // This blocks the 'BACK' button  
+		ad.setMessage(message);  
+		ad.setButton("OK", new DialogInterface.OnClickListener() {  
+			@Override  
+			public void onClick(DialogInterface dialog, int which) {  
+				dialog.dismiss();                      
+			}  
+		});  
+		ad.show(); 		
+	}	
+}
+
 /**
  * WizPurchasePlugin Plug-in
  *
@@ -207,7 +228,13 @@ public class IAP extends CordovaPlugin {
 			// Initialise the Plug-In with the given list
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
-					init(mRequestDetailSkus);
+					try {
+						init(mRequestDetailSkus);
+					}
+					catch(Exception ex) {
+						Log.d(LOG_TAG, String.format("%s", ex.getMessage()));
+						Util.alert(cordova.getActivity(), String.format("%s", ex.getMessage()));
+					}						
 				}
 			});
 		}
