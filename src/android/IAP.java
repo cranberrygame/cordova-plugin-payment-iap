@@ -227,7 +227,13 @@ public class IAP extends CordovaPlugin {
 		// Check if the Inventory is available
 		if (mInventory != null) {
 			// Get all the Sku details for the List
-			getSkuDetails(mRequestDetailSkus);
+			try {
+				getSkuDetails(mRequestDetailSkus);
+			}
+			catch(Exception ex) {
+				Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
+				Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
+			}				
 		} else {
 			// Initialise the Plug-In with the given list
 			cordova.getThreadPool().execute(new Runnable() {
@@ -236,8 +242,8 @@ public class IAP extends CordovaPlugin {
 						init(mRequestDetailSkus);
 					}
 					catch(Exception ex) {
-						Log.d(LOG_TAG, String.format("%s", ex.getMessage()));
-						Util.alert(cordova.getActivity(), String.format("%s", ex.getMessage()));
+						Log.d(LOG_TAG, String.format("2: %s", ex.getMessage()));
+						Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
 					}						
 				}
 			});
