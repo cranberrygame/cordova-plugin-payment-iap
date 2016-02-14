@@ -184,7 +184,6 @@ public class IAP extends CordovaPlugin {
 		}
 //cranberrygame end
 		if (action.equalsIgnoreCase("requestStoreListing")) {
-			//Util.alert(cordova.getActivity(), String.format("requestStoreListing"));//
 			requestStoreListing(args, callbackContext);
 			return true;
 		} 
@@ -215,7 +214,7 @@ public class IAP extends CordovaPlugin {
 	 **/
 	private void requestStoreListing(JSONArray args, CallbackContext callbackContext) throws JSONException {
 		
-		try {
+		//try {
 			// Retrieve all given Product Ids
 			JSONArray jsonSkuList = new JSONArray(args.getString(0));
 			mRequestDetailSkus = new ArrayList<String>();
@@ -226,11 +225,11 @@ public class IAP extends CordovaPlugin {
 			// Retain the callback and wait
 			mProductDetailCbContext = callbackContext;
 			retainCallBack(mProductDetailCbContext);
-		}
-		catch(Exception ex) {
-			Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
-			//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
-		}
+		//}
+		//catch(Exception ex) {
+		//	Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
+		//	//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
+		//}
 			
 		// Check if the Inventory is available
 		if (mInventory != null) {
@@ -239,20 +238,20 @@ public class IAP extends CordovaPlugin {
 				getSkuDetails(mRequestDetailSkus);
 			}
 			catch(Exception ex) {
-				Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
+				Log.d(LOG_TAG, String.format("2: %s", ex.getMessage()));
 				//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
 			}				
 		} else {
 			// Initialise the Plug-In with the given list
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
-					try {
+					//try {
 						init(mRequestDetailSkus);
-					}
-					catch(Exception ex) {
-						Log.d(LOG_TAG, String.format("2: %s", ex.getMessage()));
-						//Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
-					}						
+					//}
+					//catch(Exception ex) {
+					//	Log.d(LOG_TAG, String.format("3: %s", ex.getMessage()));
+					//	//Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
+					//}						
 				}
 			});
 		}
