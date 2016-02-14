@@ -184,7 +184,7 @@ public class IAP extends CordovaPlugin {
 		}
 //cranberrygame end
 		if (action.equalsIgnoreCase("requestStoreListing")) {
-			Util.alert(cordova.getActivity(), String.format("requestStoreListing"));//
+			//Util.alert(cordova.getActivity(), String.format("requestStoreListing"));//
 			requestStoreListing(args, callbackContext);
 			return true;
 		} 
@@ -229,7 +229,7 @@ public class IAP extends CordovaPlugin {
 		}
 		catch(Exception ex) {
 			Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
-			Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
+			//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
 		}
 			
 		// Check if the Inventory is available
@@ -240,7 +240,7 @@ public class IAP extends CordovaPlugin {
 			}
 			catch(Exception ex) {
 				Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
-				Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
+				//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
 			}				
 		} else {
 			// Initialise the Plug-In with the given list
@@ -251,7 +251,7 @@ public class IAP extends CordovaPlugin {
 					}
 					catch(Exception ex) {
 						Log.d(LOG_TAG, String.format("2: %s", ex.getMessage()));
-						Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
+						//Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
 					}						
 				}
 			});
