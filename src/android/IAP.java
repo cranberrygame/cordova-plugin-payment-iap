@@ -168,7 +168,7 @@ public class IAP extends CordovaPlugin {
 //cranberrygame start
 		if (action.equals("setUp")) {
 			//Activity activity=cordova.getActivity();
-			//webView
+			//webViewal
 			//
 			mBase64EncodedPublicKey = args.getString(0);
 			Log.d(LOG_TAG, mBase64EncodedPublicKey);
@@ -184,6 +184,7 @@ public class IAP extends CordovaPlugin {
 		}
 //cranberrygame end
 		if (action.equalsIgnoreCase("requestStoreListing")) {
+			Util.alert(cordova.getActivity(), String.format("requestStoreListing"));//
 			requestStoreListing(args, callbackContext);
 			return true;
 		} 
