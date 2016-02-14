@@ -32,27 +32,6 @@ import com.smartmobilesoftware.util.IabResult;
 import com.smartmobilesoftware.util.Inventory;
 import com.smartmobilesoftware.util.SkuDetails;
 
-//Util
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
-class Util {
-
-	//ex) Util.alert(cordova.getActivity(),"message");
-	public static void alert(Activity activity, String message) {
-		AlertDialog ad = new AlertDialog.Builder(activity).create();  
-		ad.setCancelable(false); // This blocks the 'BACK' button  
-		ad.setMessage(message);  
-		ad.setButton("OK", new DialogInterface.OnClickListener() {  
-			@Override  
-			public void onClick(DialogInterface dialog, int which) {  
-				dialog.dismiss();                      
-			}  
-		});  
-		ad.show(); 		
-	}	
-}
-
 /**
  * WizPurchasePlugin Plug-in
  *
@@ -214,44 +193,32 @@ public class IAP extends CordovaPlugin {
 	 **/
 	private void requestStoreListing(JSONArray args, CallbackContext callbackContext) throws JSONException {
 		
-		//try {
-			// Retrieve all given Product Ids
-			JSONArray jsonSkuList = new JSONArray(args.getString(0));
-			mRequestDetailSkus = new ArrayList<String>();
-			// Populate productId list
-			for (int i = 0; i < jsonSkuList.length(); i++) {
-				mRequestDetailSkus.add(jsonSkuList.get(i).toString());
-			}
-			// Retain the callback and wait
-			mProductDetailCbContext = callbackContext;
-			retainCallBack(mProductDetailCbContext);
-		//}
-		//catch(Exception ex) {
-		//	Log.d(LOG_TAG, String.format("1: %s", ex.getMessage()));
-		//	//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
-		//}
-			
+		// Retrieve all given Product Ids
+		JSONArray jsonSkuList = new JSONArray(args.getString(0));
+		mRequestDetailSkus = new ArrayList<String>();
+		// Populate productId list
+		for (int i = 0; i < jsonSkuList.length(); i++) {
+			mRequestDetailSkus.add(jsonSkuList.get(i).toString());
+		}
+		// Retain the callback and wait
+		mProductDetailCbContext = callbackContext;
+		retainCallBack(mProductDetailCbContext);
+		
 		// Check if the Inventory is available
 		if (mInventory != null) {
 			// Get all the Sku details for the List
-			try {
+			try {//fix cocoon.io canvas+ issue
 				getSkuDetails(mRequestDetailSkus);
 			}
 			catch(Exception ex) {
-				Log.d(LOG_TAG, String.format("2: %s", ex.getMessage()));
+				Log.d(LOG_TAG, String.format("%s", ex.getMessage()));
 				//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
 			}				
 		} else {
 			// Initialise the Plug-In with the given list
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
-					//try {
-						init(mRequestDetailSkus);
-					//}
-					//catch(Exception ex) {
-					//	Log.d(LOG_TAG, String.format("3: %s", ex.getMessage()));
-					//	//Util.alert(cordova.getActivity(), String.format("2: %s", ex.getMessage()));
-					//}						
+					init(mRequestDetailSkus);
 				}
 			});
 		}
