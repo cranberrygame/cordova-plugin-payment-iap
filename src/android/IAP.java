@@ -212,7 +212,6 @@ public class IAP extends CordovaPlugin {
 			}
 			catch(Exception ex) {
 				Log.d(LOG_TAG, String.format("%s", ex.getMessage()));
-				//Util.alert(cordova.getActivity(), String.format("1: %s", ex.getMessage()));
 			}				
 		} else {
 			// Initialise the Plug-In with the given list
