@@ -73,7 +73,7 @@ Your app doesn't have any in-app products yet.
 To add in-app products, you need to add the BILLING permission to your APK.
 
 //add in app product (nonconsumable)
-google play developer console - [specific app] - in app product - add - managed, product ID: testapp_removeads - Name : Remove Ads, Description: You can purchase remove ads by tapping "Remove Ads" button. And you can also restore previous purchases by tapping "Restore" button. - set active
+google play developer console - [specific app] - in app product - add - managed, product ID: testapp_removeads - Name : Remove Ads, Description: Purchase remove ads by tapping "Remove Ads" and restore by tapping "Restore". - set active
 
 //add in app product (consumable)
 google play developer console - [specific app] - in app product - add - unmanaged, product ID: testapp_coinpack1 - Name : Coin Pack1 (250 Coins), Description: Coin pack1 (250 Coins) - set active
@@ -96,7 +96,7 @@ google play developer console - [specific app] - Services & APis - license and i
 //accept paid agreement if you are adding your first app on iOS (contributed by tabrez)
 
 //add in app product (nonconsumable)
-itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Non Consumable - Select - Reference Name: testapp_removeads, Product ID: testapp_removeads - 언어 추가 - 언어: English, Display Name : Remove Ads, Description: You can purchase remove ads by tapping "Remove Ads" button. And you can also restore previous purchases by tapping "Restore" button. - Screenshot for Review (screen shot where "Remove Ads" button and "Restore" button exist)
+itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Non Consumable - Select - Reference Name: testapp_removeads, Product ID: testapp_removeads - 언어 추가 - 언어: English, Display Name : Remove Ads, Description: Purchase remove ads by tapping "Remove Ads" and restore by tapping "Restore". - Screenshot for Review (screen shot where "Remove Ads" button and "Restore" button exist)
 
 //add in app product (consumable)
 itunesconnect - Manage Your Apps - [specific app] - Manage In-App Purchases - Create New - Consumable - Select - Reference Name: testapp_coinpack1, Product ID: testapp_coinpack1 - 언어 추가 - 언어: English, Display Name : Coin Pack1 (250 Coins), Description: Coin Pack1 (250 Coins) - Screenshot for Review (screen shot where PurchaseConsumablePack button exists)
@@ -127,7 +127,7 @@ In app purchase screenshot for review (iPhone 6 Plus)
 ```c
 //add in app product (nonconsumable)
 Windows Phone Dev Center - Dashboard - select Windows Phone Store - Apps - [specific app] - Products - Add in-app product - In-app product properties - In-app product alias: testapp_removeads, Product identifier: testapp_removeads, Product type: Durable, Product lifetime: Forever - Save -
-Description - Product title: Remove Ads, Description: Remove ads, Product image: (300x300 px PNG file) - Save - Submit
+Description - Product title: Remove Ads, Description: Purchase remove ads by tapping "Remove Ads" and restore by tapping "Restore"., Product image: (300x300 px PNG file) - Save - Submit
 
 //add in app product (consumable)
 Windows Phone Dev Center - Dashboard - select Windows Phone Store - Apps - [specific app] - Products - Add in-app product - In-app product properties - In-app product alias: testapp_coinpack1, Product identifier: testapp_coinpack1, Product type: Consumable - Save -
