@@ -224,7 +224,7 @@
         productsResponse = (SKProductsResponse *)response;
         
 		NSMutableArray *productDetails = [NSMutableArray array];		
-        NSLog(@"Products found: %i", [response.products count]);
+        WizLog(@"Products found: %i", [response.products count]);
         for (SKProduct *obj in response.products) {
             // Build a detailed product list from the list of valid products
             
@@ -235,6 +235,14 @@
             [numberFormatter setLocale:obj.priceLocale];
             NSString *formattedPrice = [numberFormatter stringFromNumber:obj.price];
             
+/*			
+            NSDictionary *product = @{
+                @"productId":   obj.productIdentifier,
+                @"title":       obj.localizedTitle,
+                @"price":       formattedPrice,
+                @"description": obj.localizedDescription
+            };
+*/
             NSDictionary *product = nil;
             if(obj.localizedTitle==nil) {
             	product = @{
@@ -253,7 +261,7 @@
 	            };
             }
             
-		[productDetails addObject:product];
+			[productDetails addObject:product];
         }
         
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:productDetails];
