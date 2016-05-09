@@ -251,7 +251,7 @@ https://dl.dropboxusercontent.com/u/186681453/pluginsforcordova/iap/apk.html
 google play developer console - [specific app] - APK - Alpha test - Upload as alpha test - Drag and drop apk and publish now as alpha test.
 
 //add test user for iap
-google play developer console - configuration - account detail - testing accounts (google play account)
+google play developer console - configuration - account detail - LICENSE TESTING - Gmail accounts with testing access
 
 //add test community for alpha test or beta test download
 google play developer console - 
