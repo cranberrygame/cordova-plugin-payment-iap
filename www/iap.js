@@ -48,13 +48,5 @@ module.exports = {
 
 	restorePurchases: function (successCallback, failureCallback) {
 		cordova.exec(successCallback, failureCallback, "IAP", "restorePurchases", []);
-	},	
-
-	canMakePurchase: function(successCallback, failureCallback) {
-		cordova.exec(successCallback, failureCallback, "IAP", "canMakePurchase", []);		
-	},
-	
-	getPending: function (successCallback, failureCallback) {
-		cordova.exec(successCallback, failureCallback, "IAP", "getPending", []);
 	}
 };
