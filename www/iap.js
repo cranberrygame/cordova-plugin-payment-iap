@@ -21,8 +21,18 @@ module.exports = {
 		if (Object.prototype.toString.call(productIds) === '[object String]') {
 			// In the event one productId is passed in as String we shall put it in
 			// an array to be easily dealt with natively.
-			productIds = [ productIds ];
+			//productIds = [ productIds ];
+			var tempProductIds = [];
+			if (productIds.indexOf(",") === -1) {
+				tempProductIds.push(productIds);
+			}
+			else {
+				tempProductIds = productIds.split(",");				
+			}
+			productIds = tempProductIds;
 		}
+		//alert(JSON.stringify(productIds));
+		//alert(Object.prototype.toString.call(productIds));
 		cordova.exec(successCallback, failureCallback, "IAP", "requestStoreListing", [ productIds ]);	
 	},
 

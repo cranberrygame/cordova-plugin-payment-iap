@@ -29,6 +29,7 @@ wp8: Phonegap IAP
 
 # Change log #
 ```c
+2.0.52 Fixed string argument like "testapp_removeads,testapp_coinpack1" lead failure issue.
 ```
 # Install plugin #
 
@@ -275,6 +276,9 @@ cf)error message
 the item you requested is not available for purchase
 ==> In-activated Product Id, so Activate Product Id
 http://stackoverflow.com/questions/13117081/the-item-you-requested-is-not-available-for-purchase
+
+This product is not for sale
+==> make testing apk version and published (normal or alpha or beta) apk version same.
 ```
 
 ## iOS ##
